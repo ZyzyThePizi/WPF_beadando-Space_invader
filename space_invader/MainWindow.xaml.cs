@@ -227,6 +227,113 @@ namespace space_invader
         /// </summary>
         private void gameEngine(object sender, EventArgs e)
         {
+            ///<summary> ez a game engine eseménye, ez az esemény 20 milliszekundumonként lép működésbe az időzítő segítsével.
+            /// rect osztály deklarálásával kezdjük, ami visszavezeti a játékos 1 téglalapjához, amit a vásznon csináltunk.</summary>
+            Rect player = new Rect(Canvas.GetLeft(player1), Canvas.GetTop(player1), player1.Width, player1.Height);
+            ///<summary>a képernyőn bal oldali fennmaradó űrlények számának megjelenítése a képernyőn</summary> 
+            enemiesLeft.Content = "Invaders Left: " + totalEnemeis;
+            ///<summary> az alábbiakban a játékos mozgásának szkriptje
+            /// az if utasításban azt ellenőrizzük, hogy a játékos még mindig a határon belül van-e a bal oldali pozícióból
+            /// ha igen, akkor a játékost a képernyő bal oldala felé mozgathatjuk.</summary>
+            if (goLeft && Canvas.GetLeft(player1) > 0)
+            {
+                Canvas.SetLeft(player1, Canvas.GetLeft(player1) - 10);
+            }
+            ///<summary>az alábbi if utasításban azt ellenőrizzük, hogy a játékos bal oldali pozíciója plusz 65 pixel még mindig a fő alkalmazásablakon belül van-e jobbról.
+            /// ha igen, akkor a játékost a képernyő jobb oldala felé mozgathatjuk.</summary> 
+            else if (goRight && Canvas.GetLeft(player1) + 80 < Application.Current.MainWindow.Width)
+            {
+                Canvas.SetLeft(player1, Canvas.GetLeft(player1) + 10);
+            }
+            ///<summary>20 milliszekundumonként csökkentse a bullet timer értékét 3-mal</summary>
+            bulletTimer -= 3;
+            ///<summary> amikor a bullet timer eléri a 0 értéket</summary>
+            ///<summary> futtassuk az ellenséges lövedék készítő funkciót, és mondja meg neki, hogy hol helyezze el a lövedéket a képernyőn.</summary>
+            if (bulletTimer < 0)
+            {
+                enemyBulletMaker((Canvas.GetLeft(player1) + 20), 10);
+                bulletTimer = bulletTimerLimit;
+            }
+            /// <summary>ha az összes ellenség száma 10 alá csökken
+            /// állítsuk az ellenség sebességét 20-ra</summary>
+            if (totalEnemeis < 10)
+            {
+                enemySpeed = 20;
+            }
+            ///<summary> az alábbiakban az ellenség, a lövedékek, a játékos és az ellenséges lövedék közötti ütközésérzékelés kódja olvasható.
+            /// futtassuk a foreach ciklus, hogy egy helyi változó x és átvizsgálja az összes téglalapokat hogy elérhető-e a myCanvas-en</summary>
+            foreach (var x in myCanvas.Children.OfType<Rectangle>())
+            {
+
+                if (x is Rectangle && (string)x.Tag == "bullet")
+                {
+
+                    Canvas.SetTop(x, Canvas.GetTop(x) - 20);
+                    Rect bullet = new Rect(Canvas.GetLeft(x), Canvas.GetTop(x), x.Width, x.Height);
+                    if (Canvas.GetTop(x) < 10)
+                    {                      
+                        itemstoremove.Add(x);
+                    }
+                    foreach (var y in myCanvas.Children.OfType<Rectangle>())
+                    {
+                        if (y is Rectangle && (string)y.Tag == "enemy")
+                        {
+                            Rect enemy = new Rect(Canvas.GetLeft(y), Canvas.GetTop(y), y.Width, y.Height);
+                            if (bullet.IntersectsWith(enemy))
+                            {                       
+                                itemstoremove.Add(x);
+                                itemstoremove.Add(y);
+                                totalEnemeis -= 1;
+                            }
+                        }
+                    }
+                }
+                ///<summary> fő hurokban vagyunk, ez az időzítő kell animálni az ellenséget.
+                /// ellenőrizzük újra, hogy a tetszőleges téglalapon belül van-e a címke enemy</summary>
+                if (x is Rectangle && (string)x.Tag == "enemy")
+                {
+                    Canvas.SetLeft(x, Canvas.GetLeft(x) + enemySpeed);
+                    if (Canvas.GetLeft(x) > 820)
+                    {
+                        Canvas.SetLeft(x, -80);
+                        Canvas.SetTop(x, Canvas.GetTop(x) + (x.Height + 10));
+                    }
+                    Rect enemy = new Rect(Canvas.GetLeft(x), Canvas.GetTop(x), x.Width, x.Height);
+                    if (player.IntersectsWith(enemy))
+                    {                  
+                        dispatcherTimer.Stop();
+                        MessageBox.Show("you lose");
+                    }
+                }
+                ///<summary> most már az ellenséges lövedékeket kell ellenőriznünk.
+                /// ellenőrizzük, hogy valamelyik téglalapon belül van-e enemyBullet címke</summary>
+                if (x is Rectangle && (string)x.Tag == "enemyBullet")
+                {
+                    Canvas.SetTop(x, Canvas.GetTop(x) + 10);
+                    if (Canvas.GetTop(x) > 480)
+                    {
+                        itemstoremove.Add(x);
+                    }
+                    Rect enemyBullets = new Rect(Canvas.GetLeft(x), Canvas.GetTop(x), x.Width, x.Height);
+                    if (enemyBullets.IntersectsWith(player))
+                    {
+                        dispatcherTimer.Stop();
+                        MessageBox.Show("you lose");
+                    }
+                }
+            }
+            ///<summary> Ez itt a garbage collection loop
+            /// ez segít hogy felszabaditsunk egy kis RAM-ot
+            /// ellenőrizzük minden téglalapot, amely hozzáadódik az itemstoremove listához</summary>
+            foreach (Rectangle y in itemstoremove)
+            {
+                myCanvas.Children.Remove(y);
+            }
+            if (totalEnemeis < 1)
+            {
+                dispatcherTimer.Stop();
+                MessageBox.Show("you win");
+            }
         }
-    }
+    }   
 }
