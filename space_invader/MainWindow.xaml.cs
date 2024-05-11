@@ -227,41 +227,41 @@ namespace space_invader
         /// </summary>
         private void gameEngine(object sender, EventArgs e)
         {
-            ///<summary> ez a game engine eseménye, ez az esemény 20 milliszekundumonként lép működésbe az időzítő segítsével.
-            /// rect osztály deklarálásával kezdjük, ami visszavezeti a játékos 1 téglalapjához, amit a vásznon csináltunk.</summary>
+            // ez a game engine eseménye, ez az esemény 20 milliszekundumonként lép működésbe az időzítő segítsével.
+            // rect osztály deklarálásával kezdjük, ami visszavezeti a játékos 1 téglalapjához, amit a vásznon csináltunk.
             Rect player = new Rect(Canvas.GetLeft(player1), Canvas.GetTop(player1), player1.Width, player1.Height);
-            ///<summary>a képernyőn bal oldali fennmaradó űrlények számának megjelenítése a képernyőn</summary> 
+            //a képernyőn bal oldali fennmaradó űrlények számának megjelenítése a képernyőn
             enemiesLeft.Content = "Invaders Left: " + totalEnemeis;
-            ///<summary> az alábbiakban a játékos mozgásának szkriptje
-            /// az if utasításban azt ellenőrizzük, hogy a játékos még mindig a határon belül van-e a bal oldali pozícióból
-            /// ha igen, akkor a játékost a képernyő bal oldala felé mozgathatjuk.</summary>
+            // az alábbiakban a játékos mozgásának szkriptje
+            // az if utasításban azt ellenőrizzük, hogy a játékos még mindig a határon belül van-e a bal oldali pozícióból
+            // ha igen, akkor a játékost a képernyő bal oldala felé mozgathatjuk.
             if (goLeft && Canvas.GetLeft(player1) > 0)
             {
                 Canvas.SetLeft(player1, Canvas.GetLeft(player1) - 10);
             }
-            ///<summary>az alábbi if utasításban azt ellenőrizzük, hogy a játékos bal oldali pozíciója plusz 65 pixel még mindig a fő alkalmazásablakon belül van-e jobbról.
-            /// ha igen, akkor a játékost a képernyő jobb oldala felé mozgathatjuk.</summary> 
+            //az alábbi if utasításban azt ellenőrizzük, hogy a játékos bal oldali pozíciója plusz 65 pixel még mindig a fő alkalmazásablakon belül van-e jobbról.
+            // ha igen, akkor a játékost a képernyő jobb oldala felé mozgathatjuk.
             else if (goRight && Canvas.GetLeft(player1) + 80 < Application.Current.MainWindow.Width)
             {
                 Canvas.SetLeft(player1, Canvas.GetLeft(player1) + 10);
             }
-            ///<summary>20 milliszekundumonként csökkentse a bullet timer értékét 3-mal</summary>
+            //20 milliszekundumonként csökkentse a bullet timer értékét 3-mal
             bulletTimer -= 3;
-            ///<summary> amikor a bullet timer eléri a 0 értéket</summary>
-            ///<summary> futtassuk az ellenséges lövedék készítő funkciót, és mondja meg neki, hogy hol helyezze el a lövedéket a képernyőn.</summary>
+            // amikor a bullet timer eléri a 0 értéket
+            // futtassuk az ellenséges lövedék készítő funkciót, és mondja meg neki, hogy hol helyezze el a lövedéket a képernyőn.
             if (bulletTimer < 0)
             {
                 enemyBulletMaker((Canvas.GetLeft(player1) + 20), 10);
                 bulletTimer = bulletTimerLimit;
             }
-            /// <summary>ha az összes ellenség száma 10 alá csökken
-            /// állítsuk az ellenség sebességét 20-ra</summary>
+            // ha az összes ellenség száma 10 alá csökken
+            // állítsuk az ellenség sebességét 20-ra
             if (totalEnemeis < 10)
             {
                 enemySpeed = 20;
             }
-            ///<summary> az alábbiakban az ellenség, a lövedékek, a játékos és az ellenséges lövedék közötti ütközésérzékelés kódja olvasható.
-            /// futtassuk a foreach ciklus, hogy egy helyi változó x és átvizsgálja az összes téglalapokat hogy elérhető-e a myCanvas-en</summary>
+            // az alábbiakban az ellenség, a lövedékek, a játékos és az ellenséges lövedék közötti ütközésérzékelés kódja olvasható.
+            // futtassuk a foreach ciklus, hogy egy helyi változó x és átvizsgálja az összes téglalapokat hogy elérhető-e a myCanvas-en
             foreach (var x in myCanvas.Children.OfType<Rectangle>())
             {
 
@@ -288,8 +288,8 @@ namespace space_invader
                         }
                     }
                 }
-                ///<summary> fő hurokban vagyunk, ez az időzítő kell animálni az ellenséget.
-                /// ellenőrizzük újra, hogy a tetszőleges téglalapon belül van-e a címke enemy</summary>
+                //fő hurokban vagyunk, ez az időzítő kell animálni az ellenséget.
+                // ellenőrizzük újra, hogy a tetszőleges téglalapon belül van-e a címke enemy
                 if (x is Rectangle && (string)x.Tag == "enemy")
                 {
                     Canvas.SetLeft(x, Canvas.GetLeft(x) + enemySpeed);
@@ -305,8 +305,8 @@ namespace space_invader
                         MessageBox.Show("you lose");
                     }
                 }
-                ///<summary> most már az ellenséges lövedékeket kell ellenőriznünk.
-                /// ellenőrizzük, hogy valamelyik téglalapon belül van-e enemyBullet címke</summary>
+                // most már az ellenséges lövedékeket kell ellenőriznünk.
+                // ellenőrizzük, hogy valamelyik téglalapon belül van-e enemyBullet címke
                 if (x is Rectangle && (string)x.Tag == "enemyBullet")
                 {
                     Canvas.SetTop(x, Canvas.GetTop(x) + 10);
@@ -322,9 +322,9 @@ namespace space_invader
                     }
                 }
             }
-            ///<summary> Ez itt a garbage collection loop
-            /// ez segít hogy felszabaditsunk egy kis RAM-ot
-            /// ellenőrizzük minden téglalapot, amely hozzáadódik az itemstoremove listához</summary>
+            //Ez itt a garbage collection loop
+            // ez segít hogy felszabaditsunk egy kis RAM-ot
+            // ellenőrizzük minden téglalapot, amely hozzáadódik az itemstoremove listához
             foreach (Rectangle y in itemstoremove)
             {
                 myCanvas.Children.Remove(y);
