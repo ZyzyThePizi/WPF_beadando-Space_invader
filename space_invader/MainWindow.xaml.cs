@@ -225,7 +225,7 @@ namespace space_invader
         /// <summary>
         /// Ez fogja végezni a mozgást, az ellenségekre való lövést, az űrhajónk <c>animálását</c>
         /// </summary>
-        private void gameEngine(object sender, EventArgs e)
+        private void gameEngine(object sender, EventArgs e) // Cseh Martin Krisztián (JGCN6R) része és ami ez a komment fölött helyezkedik el azt Vörös Gergő (RWDT8V) készítette
         {
             // ez a game engine eseménye, ez az esemény 20 milliszekundumonként lép működésbe az időzítő segítsével.
             // rect osztály deklarálásával kezdjük, ami visszavezeti a játékos 1 téglalapjához, amit a vásznon csináltunk.
